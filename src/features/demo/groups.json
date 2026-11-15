@@ -1,0 +1,66 @@
+[
+  {
+    "key": "morning-walkers",
+    "name": "Morning Walkers Circle",
+    "description": "A friendly demo circle for planning relaxed morning walks.",
+    "interests": ["Walking", "Conversation"],
+    "members": ["meera", "rajesh", "sunita", "mohan"],
+    "messages": [
+      {
+        "sender": "rajesh",
+        "body": "Good morning everyone! Are we meeting for our walk tomorrow?"
+      },
+      {
+        "sender": "sunita",
+        "body": "Good morning! I should be free around 7 AM."
+      },
+      {
+        "sender": "mohan",
+        "body": "That sounds wonderful. Let's meet near the park."
+      },
+      {
+        "sender": "meera",
+        "body": "I'll join too!"
+      }
+    ]
+  },
+  {
+    "key": "gardening",
+    "name": "Gardening Friends",
+    "description": "Share garden stories and ideas with fictional neighbors.",
+    "interests": ["Gardening", "Photography"],
+    "members": ["meera", "rajesh", "vijay"],
+    "messages": [
+      {
+        "sender": "vijay",
+        "body": "My demo balcony garden has a new flower today. What are you growing?"
+      }
+    ]
+  },
+  {
+    "key": "evening",
+    "name": "Evening Conversations",
+    "description": "A relaxed place for stories and friendly evening check-ins.",
+    "interests": ["Storytelling", "Conversation"],
+    "members": ["meera", "mohan", "neelam", "kamla"],
+    "messages": [
+      {
+        "sender": "mohan",
+        "body": "Would anyone like to share a favorite childhood memory this evening?"
+      }
+    ]
+  },
+  {
+    "key": "books",
+    "name": "Book Lovers Club",
+    "description": "A demo reading circle for recommendations and conversation.",
+    "interests": ["Reading", "Books"],
+    "members": ["meera", "sunita", "asha"],
+    "messages": [
+      {
+        "sender": "asha",
+        "body": "Welcome to our book circle! What kind of stories do you enjoy?"
+      }
+    ]
+  }
+]

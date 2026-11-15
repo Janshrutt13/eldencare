@@ -1,5 +1,5 @@
 import { ActionForm } from "@/components/ui/action-form";
-import { respondConnection } from "./actions";
+import { respondConnection, removeConnection } from "./actions";
 import { canRespondToConnection } from "./domain";
 import type { Connection } from "@/types/social";
 
@@ -13,9 +13,7 @@ export function ConnectionList({
   return (
     <section className="card stack">
       <h2>Connection requests</h2>
-      {!connections.length && (
-        <p className="muted">No requests yet.</p>
-      )}
+      {!connections.length && <p className="muted">No requests yet.</p>}
       <ul className="stack" style={{ gap: "0" }}>
         {connections.map((connection, i) => (
           <li
@@ -25,7 +23,9 @@ export function ConnectionList({
           >
             <p className="font-medium text-neutral-800">
               {connection.requester_name} → {connection.recipient_name}{" "}
-              <span className="badge badge-pending ml-1">{connection.status}</span>
+              <span className="badge badge-pending ml-1">
+                {connection.status}
+              </span>
             </p>
             {canRespondToConnection(connection, userId) && (
               <div className="flex gap-3">
@@ -45,6 +45,15 @@ export function ConnectionList({
                   </ActionForm>
                 ))}
               </div>
+            )}
+            {connection.status === "accepted" && (
+              <ActionForm
+                action={removeConnection}
+                label="Remove connection"
+                confirm="Remove this connection? Existing shared group memberships will not change."
+              >
+                <input type="hidden" name="id" value={connection.id} />
+              </ActionForm>
             )}
           </li>
         ))}

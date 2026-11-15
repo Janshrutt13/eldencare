@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { UpcomingCalls } from "@/features/companion-circle/upcoming-calls";
 import { getCareContext } from "@/lib/auth/elder";
 import { ProfilePicker } from "@/components/dashboard/profile-picker";
 import { DoseList } from "@/features/medications/dose-list";
@@ -111,7 +112,17 @@ export default async function DashboardPage({
           <section className="card stack content-start">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#888"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
                   <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18" />
                 </svg>
                 <h2>Today&apos;s medicines</h2>
@@ -130,8 +141,21 @@ export default async function DashboardPage({
           <section className="card stack content-start">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#888"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <rect x="3" y="4" width="18" height="18" rx="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
                 </svg>
                 <h2>Upcoming appointments</h2>
               </div>
@@ -145,10 +169,25 @@ export default async function DashboardPage({
             <hr className="divider" />
             {!appointments.data.length && (
               <div className="flex flex-col items-center gap-3 py-6 text-center">
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
+                <svg
+                  width="36"
+                  height="36"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#ccc"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <rect x="3" y="4" width="18" height="18" rx="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
                 </svg>
-                <p className="text-sm text-neutral-500">No upcoming appointments.</p>
+                <p className="text-sm text-neutral-500">
+                  No upcoming appointments.
+                </p>
               </div>
             )}
             <ul className="stack" style={{ gap: "0" }}>
@@ -158,14 +197,20 @@ export default async function DashboardPage({
                   className={`stack py-4 ${i > 0 ? "border-t border-neutral-100" : ""}`}
                   style={{ gap: "0.25rem" }}
                 >
-                  <h3 className="font-semibold text-neutral-900">{a.doctor_name}</h3>
+                  <h3 className="font-semibold text-neutral-900">
+                    {a.doctor_name}
+                  </h3>
                   {a.specialization && (
-                    <p className="text-sm text-neutral-500">{a.specialization}</p>
+                    <p className="text-sm text-neutral-500">
+                      {a.specialization}
+                    </p>
                   )}
                   <p className="text-sm font-medium text-neutral-800">
                     {formatDateTime(a.scheduled_at)}
                   </p>
-                  <p className="text-sm text-neutral-500 break-words">{a.location}</p>
+                  <p className="text-sm text-neutral-500 break-words">
+                    {a.location}
+                  </p>
                 </li>
               ))}
             </ul>
@@ -175,14 +220,26 @@ export default async function DashboardPage({
         {/* Recent activity */}
         <section className="card stack">
           <div className="flex items-center gap-2">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#888"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
               <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
             </svg>
             <h2>Recent activity</h2>
           </div>
           <hr className="divider" />
           {!activity.data.length && (
-            <p className="text-sm text-neutral-500">No dose confirmations recorded yet.</p>
+            <p className="text-sm text-neutral-500">
+              No dose confirmations recorded yet.
+            </p>
           )}
           <ul className="stack" style={{ gap: "0" }}>
             {activity.data.map((d, i) => (
@@ -190,12 +247,18 @@ export default async function DashboardPage({
                 key={d.id}
                 className={`flex items-center justify-between gap-3 py-3 text-sm ${i > 0 ? "border-t border-neutral-100" : ""}`}
               >
-                <span className="font-medium text-neutral-800">{d.medication_name}</span>
+                <span className="font-medium text-neutral-800">
+                  {d.medication_name}
+                </span>
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  <span className={`badge ${d.status === "taken" ? "badge-taken" : "badge-skipped"}`}>
+                  <span
+                    className={`badge ${d.status === "taken" ? "badge-taken" : "badge-skipped"}`}
+                  >
                     {d.status}
                   </span>
-                  <span className="text-neutral-400 text-xs">{formatDateTime(d.confirmed_at!)}</span>
+                  <span className="text-neutral-400 text-xs">
+                    {formatDateTime(d.confirmed_at!)}
+                  </span>
                 </div>
               </li>
             ))}
@@ -226,12 +289,23 @@ export default async function DashboardPage({
       )}
 
       {healthcare}
+      <UpcomingCalls />
 
       {/* Stay connected */}
       <section className="card stack">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#888"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
               <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
             </svg>
             <h2>Stay connected</h2>

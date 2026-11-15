@@ -10,7 +10,7 @@ export function haversineKm(
       Math.sin(rad(b.longitude - a.longitude) / 2) ** 2;
   return 6371 * 2 * Math.asin(Math.sqrt(Math.min(1, h)));
 }
-export function withinRadius(distance: number, radius: 5 | 10) {
+export function withinRadius(distance: number, radius: 5 | 7.5 | 10) {
   return Number.isFinite(distance) && distance >= 0 && distance <= radius;
 }
 export function canRespondToConnection(

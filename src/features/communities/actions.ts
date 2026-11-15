@@ -39,6 +39,22 @@ export async function requestConnection(
       }
     : saved("Connection request sent.");
 }
+export async function removeConnection(
+  _: FormState,
+  form: FormData,
+): Promise<FormState> {
+  const id = z.uuid().safeParse(form.get("id"));
+  if (!id.success) return { error: "Invalid connection." };
+  const { supabase } = await requireSession();
+  const { error } = await supabase.rpc("remove_connection", {
+    request_id: id.data,
+  });
+  return error
+    ? { error: "This connection is unavailable or belongs to another account." }
+    : saved(
+        "Connection removed. Shared groups remain separate; leave any group you no longer want to join.",
+      );
+}
 export async function respondConnection(
   _: FormState,
   form: FormData,

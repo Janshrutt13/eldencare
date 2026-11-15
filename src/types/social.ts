@@ -40,6 +40,9 @@ export type Connection = {
   created_at: string;
 };
 export type SocialGroup = {
+  description: string;
+  interests: string[];
+  demo_key: string | null;
   id: string;
   name: string;
   created_by: string | null;
@@ -52,10 +55,33 @@ export type GroupMember = {
   joined_at: string;
 };
 export type SocialMessage = {
+  demo_key: string | null;
   id: string;
   group_id: string;
   sender_id: string | null;
   sender_name: string;
   body: string;
   created_at: string;
+};
+export type DemoPerson = {
+  demo_key: string;
+  user_id: string | null;
+  display_name: string;
+  age: number;
+  role: string;
+  category: string;
+  bio: string;
+  interests: string[];
+  latitude: number;
+  longitude: number;
+  availability: string;
+  contact_label: string;
+};
+export type GroupSummary = Pick<
+  SocialGroup,
+  "id" | "name" | "description" | "interests" | "demo_key"
+> & {
+  member_count: number | string;
+  member_names: string[];
+  recent_message: string | null;
 };

@@ -9,6 +9,8 @@ import type {
   SocialGroup,
   GroupMember,
   SocialMessage,
+  DemoPerson,
+  GroupSummary,
 } from "./social";
 export type Json =
   | string
@@ -71,9 +73,13 @@ export type Database = {
       social_groups: Table<SocialGroup>;
       social_group_members: Table<GroupMember>;
       social_messages: Table<SocialMessage>;
+      demo_people: Table<DemoPerson>;
     };
     Views: { [_ in never]: never };
     Functions: {
+      demo_discovery: { Args: Record<string, never>; Returns: DemoPerson[] };
+      group_summaries: { Args: Record<string, never>; Returns: GroupSummary[] };
+      remove_connection: { Args: { request_id: string }; Returns: undefined };
       care_summary: {
         Args: { target_elder: string };
         // PostgreSQL count() returns bigint; PostgREST serialises it as string.

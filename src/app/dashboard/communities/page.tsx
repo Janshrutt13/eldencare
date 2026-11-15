@@ -6,6 +6,9 @@ import { NearbyPeople } from "@/features/communities/nearby-people";
 import { ConnectionList } from "@/features/communities/connection-list";
 import { GroupList } from "@/features/communities/group-list";
 import { GroupPanel } from "@/features/communities/group-panel";
+import { DemoDiscovery } from "@/features/communities/demo-discovery";
+import { parseRadius } from "@/features/demo/catalog";
+import { DemoAccountHelp } from "@/features/demo/account-help";
 
 type Query = {
   radius?: string;
@@ -19,27 +22,39 @@ export default async function CommunitiesPage({
   searchParams: Promise<Query>;
 }) {
   const params = await searchParams;
-  const radius = params.radius === "10" ? 10 : 5;
+  const radius = parseRadius(params.radius);
   const { supabase, user, profile } = await requireSession();
-  const [social, nearby, connections, groups] = await Promise.all([
-    supabase
-      .from("social_profiles")
-      .select("*")
-      .eq("user_id", user.id)
-      .maybeSingle(),
-    supabase.rpc("nearby_people", { radius_km: radius }),
-    supabase
-      .from("connection_requests")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(200),
-    supabase
-      .from("social_groups")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(50),
-  ]);
-  if (social.error || nearby.error || connections.error || groups.error)
+  const [social, nearby, connections, groups, demo, directory, summaries] =
+    await Promise.all([
+      supabase
+        .from("social_profiles")
+        .select("*")
+        .eq("user_id", user.id)
+        .maybeSingle(),
+      supabase.rpc("nearby_people", { radius_km: radius === 5 ? 5 : 10 }),
+      supabase
+        .from("connection_requests")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(200),
+      supabase
+        .from("social_groups")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(50),
+      supabase.rpc("demo_discovery", {}),
+      supabase.from("demo_people").select("*").limit(30),
+      supabase.rpc("group_summaries", {}),
+    ]);
+  if (
+    social.error ||
+    nearby.error ||
+    connections.error ||
+    groups.error ||
+    demo.error ||
+    directory.error ||
+    summaries.error
+  )
     throw new Error("Could not load communities.");
   const accepted = connections.data
     .filter((c) => c.status === "accepted")
@@ -49,7 +64,7 @@ export default async function CommunitiesPage({
     }));
   const group = params.group
     ? groups.data.find((g) => g.id === params.group)
-    : groups.data[0];
+    : undefined;
   let groupView: React.ReactNode;
   if (group) {
     let query = supabase
@@ -84,6 +99,7 @@ export default async function CommunitiesPage({
         contacts={accepted}
         radius={radius}
         hasCursor={cursor.success}
+        userId={user.id}
       />
     );
   }
@@ -95,6 +111,7 @@ export default async function CommunitiesPage({
         to healthcare records.
       </p>
       <RefreshButton />
+      <DemoAccountHelp />
       <details className="card" open={!social.data}>
         <summary>Your social profile and discovery preferences</summary>
         <div className="mt-4">
@@ -104,9 +121,20 @@ export default async function CommunitiesPage({
           />
         </div>
       </details>
+      <DemoDiscovery
+        people={demo.data}
+        seeded={directory.data.some((p) => p.role === "elderly")}
+        connections={connections.data}
+        radius={radius}
+        canConnect={Boolean(social.data?.discovery_enabled)}
+      />
       <NearbyPeople
         profile={social.data}
-        people={nearby.data}
+        people={nearby.data.filter(
+          (p) =>
+            Number(p.distance_km) <= radius &&
+            !directory.data.some((d) => d.user_id === p.user_id),
+        )}
         connections={connections.data}
         radius={radius}
       />
@@ -116,6 +144,7 @@ export default async function CommunitiesPage({
         contacts={accepted}
         selected={group?.id}
         radius={radius}
+        summaries={summaries.data}
       />
       {params.group && !group && (
         <p role="alert">This group is unavailable or you have left it.</p>

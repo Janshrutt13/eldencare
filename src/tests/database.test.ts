@@ -3,6 +3,10 @@ import { PGlite } from "@electric-sql/pglite";
 import { pgcrypto } from "@electric-sql/pglite/contrib/pgcrypto";
 import { readFile, readdir } from "node:fs/promises";
 import { resolve } from "node:path";
+import { randomUUID } from "node:crypto";
+import peopleCatalog from "@/features/demo/catalog.json";
+import groupCatalog from "@/features/demo/groups.json";
+const catalog = { ...peopleCatalog, groups: groupCatalog };
 
 // Real embedded PostgreSQL + pgcrypto; only Supabase's Auth schema/identity is emulated.
 const db = new PGlite({ extensions: { pgcrypto } });
@@ -15,6 +19,7 @@ let medication: string;
 let dose: string;
 let group: string;
 let connection: string;
+const demoIds: Record<string, string> = {};
 async function actor(id: string) {
   await db.exec("reset role");
   await db.query("select set_config('request.jwt.claim.sub',$1,false)", [id]);
@@ -374,6 +379,194 @@ describe.sequential("database authorization and transactions", () => {
         [medication],
       ),
     ).toBe(0);
+  });
+  it("seeds the Jaipur social graph once with real memberships and ordered fictional messages", async () => {
+    await db.exec(
+      "reset role;select set_config('request.jwt.claim.sub','',false)",
+    );
+    for (const person of catalog.people) {
+      const id = randomUUID();
+      demoIds[person.key] = id;
+      await db.query(
+        "insert into auth.users(id,email,raw_user_meta_data) values($1,$2,$3)",
+        [
+          id,
+          `${person.key}@example.invalid`,
+          JSON.stringify({
+            display_name: person.name,
+            role: person.role === "volunteer" ? "family" : person.role,
+          }),
+        ],
+      );
+      if (person.role === "volunteer")
+        await db.query(
+          "update public.profiles set role='volunteer' where id=$1",
+          [id],
+        );
+      await db.query(
+        "insert into public.social_profiles(user_id,display_name,latitude,longitude,is_demo,discovery_enabled,available_for_calls) values($1,$2,$3,$4,true,true,true)",
+        [id, person.name, person.latitude, person.longitude],
+      );
+      await db.query(
+        "insert into public.demo_people(demo_key,user_id,display_name,age,role,category,bio,interests,latitude,longitude,availability,contact_label) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)",
+        [
+          person.key,
+          id,
+          person.name,
+          person.age,
+          person.role,
+          person.category,
+          person.bio,
+          person.interests,
+          person.latitude,
+          person.longitude,
+          person.availability,
+          `${person.key}@example.invalid`,
+        ],
+      );
+    }
+    await db.exec("set role service_role");
+    expect(
+      await scalar<boolean>("select public.seed_jaipur_graph($1)", [
+        JSON.stringify(catalog.groups),
+      ]),
+    ).toBe(true);
+    expect(
+      await scalar<boolean>("select public.seed_jaipur_graph($1)", [
+        JSON.stringify(catalog.groups),
+      ]),
+    ).toBe(false);
+    expect(
+      await scalar<number>(
+        "select count(*)::int from public.social_groups where demo_key is not null",
+      ),
+    ).toBe(4);
+    expect(
+      await scalar<number>(
+        "select count(*)::int from public.social_messages where demo_key is not null",
+      ),
+    ).toBe(7);
+    await actor(demoIds.meera);
+    const summaries = await db.query<{
+      name: string;
+      member_count: number;
+      member_names: string[];
+    }>("select * from public.group_summaries()");
+    expect(summaries.rows).toHaveLength(4);
+    expect(
+      summaries.rows.find((g) => g.name === "Morning Walkers Circle")
+        ?.member_names,
+    ).toContain("Rajesh Sharma");
+    const chat = await scalar<string>(
+      "select id from public.social_groups where demo_key='jaipur-v1:morning-walkers'",
+    );
+    const messages = await db.query<{ body: string }>(
+      "select body from public.social_messages where group_id=$1 order by created_at",
+      [chat],
+    );
+    expect(messages.rows.map((m) => m.body)).toEqual(
+      catalog.groups[0].messages.map((m) => m.body),
+    );
+    await db.query(
+      "select public.send_social_message($1,'A new persisted message')",
+      [chat],
+    );
+    await expect(
+      db.query("select public.send_social_message($1,'   ')", [chat]),
+    ).rejects.toThrow();
+    await expect(
+      db.query("select public.send_social_message($1,$2)", [
+        chat,
+        "x".repeat(2001),
+      ]),
+    ).rejects.toThrow();
+    await actor(outsider);
+    expect(
+      (await db.query("select * from public.group_summaries()")).rows,
+    ).toHaveLength(0);
+    await expect(
+      db.query("select public.seed_jaipur_graph($1)", [
+        JSON.stringify(catalog.groups),
+      ]),
+    ).rejects.toThrow();
+  });
+  it("removes only the actor's connection and seed reruns preserve revocations and new chat", async () => {
+    await actor(demoIds.meera);
+    const request = await scalar<string>(
+      "select id from public.connection_requests where recipient_id=$1",
+      [demoIds.rajesh],
+    );
+    await actor(outsider);
+    await expect(
+      db.query("select public.remove_connection($1)", [request]),
+    ).rejects.toThrow();
+    await actor(demoIds.meera);
+    await db.query("select public.remove_connection($1)", [request]);
+    await db.query("delete from public.care_memberships where member_id=$1", [
+      demoIds.ananya,
+    ]);
+    await db.exec(
+      "reset role;select set_config('request.jwt.claim.sub','',false);set role service_role",
+    );
+    expect(
+      await scalar<boolean>("select public.seed_jaipur_graph($1)", [
+        JSON.stringify(catalog.groups),
+      ]),
+    ).toBe(false);
+    expect(
+      await scalar<number>(
+        "select count(*)::int from public.connection_requests where id=$1",
+        [request],
+      ),
+    ).toBe(0);
+    expect(
+      await scalar<number>(
+        "select count(*)::int from public.care_memberships where member_id=$1",
+        [demoIds.ananya],
+      ),
+    ).toBe(0);
+    expect(
+      await scalar<number>(
+        "select count(*)::int from public.social_messages where body='A new persisted message'",
+      ),
+    ).toBe(1);
+  });
+  it("keeps map coordinates fictional, honors demo discovery opt-out, and preserves real medical isolation", async () => {
+    await actor(demoIds.rajesh);
+    await expect(
+      db.query("update public.demo_people set latitude=0 where user_id=$1", [
+        demoIds.rajesh,
+      ]),
+    ).rejects.toThrow();
+    await db.query("select public.save_social_profile($1)", [
+      JSON.stringify({
+        display_name: "Rajesh",
+        bio: "",
+        interests: [],
+        latitude: 40,
+        longitude: 0,
+        discovery_enabled: false,
+        available_for_calls: true,
+      }),
+    ]);
+    await actor(demoIds.meera);
+    const discovered = await db.query<{ demo_key: string }>(
+      "select * from public.demo_discovery()",
+    );
+    expect(discovered.rows.some((p) => p.demo_key === "rajesh")).toBe(false);
+    expect(
+      await scalar<number>(
+        "select latitude from public.demo_people where demo_key='rajesh'",
+      ),
+    ).toBe(26.94);
+    await actor(demoIds.sneha);
+    expect(
+      (await db.query("select * from public.elder_profiles")).rows,
+    ).toHaveLength(0);
+    await actor(demoIds.rahul);
+    expect(
+      (await db.query("select * from public.elder_profiles")).rows,
+    ).toHaveLength(1);
   });
   it("enforces a persistent AI usage quota", async () => {
     await actor(outsider);

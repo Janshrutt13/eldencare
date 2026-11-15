@@ -1,21 +1,25 @@
 import Link from "next/link";
 import { ActionForm } from "@/components/ui/action-form";
 import { createGroup } from "./actions";
-import type { SocialGroup } from "@/types/social";
+import type { SocialGroup, GroupSummary } from "@/types/social";
+import { Initials } from "@/components/ui/initials";
+import demoGroups from "@/features/demo/groups.json";
 export type AcceptedContact = { id: string; name: string };
 export function GroupList({
   groups,
   contacts,
   selected,
   radius,
+  summaries,
 }: {
   groups: SocialGroup[];
   contacts: AcceptedContact[];
   selected?: string;
   radius: number;
+  summaries: GroupSummary[];
 }) {
   return (
-    <section className="card stack">
+    <section className="card stack" id="my-groups">
       <h2>Your groups</h2>
       <p className="muted">
         Groups contain accepted connections. Adding a connection gives them
@@ -47,16 +51,58 @@ export function GroupList({
       ) : (
         <p>Accept a connection before creating a group.</p>
       )}
-      <div className="flex flex-wrap gap-2">
-        {groups.map((group) => (
-          <Link
-            key={group.id}
-            className={`button ${group.id === selected ? "primary" : ""}`}
-            href={`/dashboard/communities?radius=${radius}&group=${group.id}`}
-          >
-            {group.name}
-          </Link>
-        ))}
+      {!groups.length && (
+        <div className="stack">
+          <p>
+            No groups joined yet. Create one from an accepted connection, or
+            sign in as seeded Meera to try these fictional groups:
+          </p>
+          {demoGroups.map((group) => (
+            <div key={group.key} className="rounded-lg bg-neutral-50 p-3">
+              <h3>{group.name}</h3>
+              <p>{group.description}</p>
+              <p className="muted text-sm">
+                Demo preview · membership required to read messages
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+      <div className="grid gap-3 md:grid-cols-2">
+        {groups.map((group) => {
+          const summary = summaries.find((s) => s.id === group.id);
+          return (
+            <article
+              className="rounded-xl border border-neutral-200 p-4 stack"
+              key={group.id}
+            >
+              <Link
+                key={group.id}
+                className={`button ${group.id === selected ? "primary" : ""}`}
+                href={`/dashboard/communities?radius=${radius}&group=${group.id}#group-chat`}
+              >
+                {group.name}
+              </Link>
+              <p>{group.description || "A group for friendly conversation."}</p>
+              {group.demo_key && (
+                <p className="muted text-sm">Fictional demo group</p>
+              )}
+              <p className="text-base">{group.interests.join(" · ")}</p>
+              <p>{summary?.member_count ?? 0} members</p>
+              <div className="flex flex-wrap gap-2">
+                {summary?.member_names.slice(0, 6).map((name) => (
+                  <span key={name} title={name}>
+                    <Initials name={name} />
+                  </span>
+                ))}
+              </div>
+              <p className="muted text-base line-clamp-2">
+                {summary?.recent_message ||
+                  "No messages yet. Start a conversation."}
+              </p>
+            </article>
+          );
+        })}
       </div>
     </section>
   );

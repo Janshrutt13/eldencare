@@ -1,0 +1,202 @@
+{
+  "version": "jaipur-v1",
+  "center": {
+    "latitude": 26.9124,
+    "longitude": 75.7873,
+    "label": "Jaipur, Rajasthan · fictional demo center"
+  },
+  "people": [
+    {
+      "key": "meera",
+      "name": "Meera",
+      "age": 70,
+      "role": "elderly",
+      "category": "Demo elderly user",
+      "latitude": 26.9124,
+      "longitude": 75.7873,
+      "interests": ["Walking", "Books"],
+      "bio": "Enjoys morning walks and getting to know her neighborhood circle.",
+      "availability": "Available for a demo chat"
+    },
+    {
+      "key": "rajesh",
+      "name": "Rajesh Sharma",
+      "age": 68,
+      "role": "elderly",
+      "category": "Nearby companion",
+      "latitude": 26.94,
+      "longitude": 75.79,
+      "interests": ["Gardening", "Morning walks"],
+      "bio": "A retired teacher who enjoys tending plants and walking with friends.",
+      "availability": "Morning conversations"
+    },
+    {
+      "key": "sunita",
+      "name": "Sunita Mehta",
+      "age": 71,
+      "role": "elderly",
+      "category": "Nearby companion",
+      "latitude": 26.9,
+      "longitude": 75.82,
+      "interests": ["Reading", "Music"],
+      "bio": "Loves sharing book recommendations and listening to old melodies.",
+      "availability": "Available for a demo chat"
+    },
+    {
+      "key": "mohan",
+      "name": "Mohan Verma",
+      "age": 73,
+      "role": "elderly",
+      "category": "Nearby companion",
+      "latitude": 26.88,
+      "longitude": 75.77,
+      "interests": ["Chess", "Storytelling"],
+      "bio": "Always happy to share a story or play a friendly game of chess.",
+      "availability": "Evening conversations"
+    },
+    {
+      "key": "kamla",
+      "name": "Kamla Devi",
+      "age": 69,
+      "role": "elderly",
+      "category": "Nearby companion",
+      "latitude": 26.96,
+      "longitude": 75.8,
+      "interests": ["Cooking", "Community activities"],
+      "bio": "Enjoys exchanging family recipes and planning small community gatherings.",
+      "availability": "Afternoon conversations"
+    },
+    {
+      "key": "ramesh",
+      "name": "Ramesh Gupta",
+      "age": 72,
+      "role": "elderly",
+      "category": "Nearby companion",
+      "latitude": 26.9,
+      "longitude": 75.85,
+      "interests": ["Yoga", "Outdoor walks"],
+      "bio": "Likes peaceful outdoor walks and meeting new walking partners.",
+      "availability": "Morning conversations"
+    },
+    {
+      "key": "asha",
+      "name": "Asha Kapoor",
+      "age": 67,
+      "role": "elderly",
+      "category": "Nearby companion",
+      "latitude": 26.86,
+      "longitude": 75.75,
+      "interests": ["Classical music", "Books"],
+      "bio": "A music enthusiast who would love to start a small book discussion circle.",
+      "availability": "Available for a demo chat"
+    },
+    {
+      "key": "vijay",
+      "name": "Vijay Sethi",
+      "age": 74,
+      "role": "elderly",
+      "category": "Nearby companion",
+      "latitude": 26.98,
+      "longitude": 75.82,
+      "interests": ["Photography", "Gardening"],
+      "bio": "Enjoys photographing flowers and swapping gardening tips with friends.",
+      "availability": "Weekend conversations"
+    },
+    {
+      "key": "neelam",
+      "name": "Neelam Joshi",
+      "age": 70,
+      "role": "elderly",
+      "category": "Nearby companion",
+      "latitude": 26.85,
+      "longitude": 75.85,
+      "interests": ["Painting", "Social gatherings"],
+      "bio": "Loves painting and bringing neighbors together for relaxed conversations.",
+      "availability": "Evening conversations"
+    },
+    {
+      "key": "ananya",
+      "name": "Ananya Sharma",
+      "age": 38,
+      "role": "family",
+      "category": "Daughter",
+      "latitude": 26.92,
+      "longitude": 75.79,
+      "interests": ["Reading"],
+      "bio": "Meera's fictional daughter and part of her demo care team.",
+      "availability": "Evenings in this demo"
+    },
+    {
+      "key": "amit",
+      "name": "Amit Sharma",
+      "age": 42,
+      "role": "family",
+      "category": "Son",
+      "latitude": 26.92,
+      "longitude": 75.79,
+      "interests": ["Walking"],
+      "bio": "Meera's fictional son, available for family check-ins.",
+      "availability": "Weekends in this demo"
+    },
+    {
+      "key": "rahul",
+      "name": "Rahul Mehta",
+      "age": 34,
+      "role": "caretaker",
+      "category": "Primary Caretaker",
+      "latitude": 26.92,
+      "longitude": 75.79,
+      "interests": ["Gardening"],
+      "bio": "Fictional primary caretaker supporting Meera's daily routines.",
+      "availability": "Morning demo shift"
+    },
+    {
+      "key": "priya",
+      "name": "Priya Singh",
+      "age": 32,
+      "role": "caretaker",
+      "category": "Secondary Caretaker",
+      "latitude": 26.92,
+      "longitude": 75.79,
+      "interests": ["Music"],
+      "bio": "Fictional secondary caretaker available for scheduled check-ins.",
+      "availability": "Afternoon demo shift"
+    },
+    {
+      "key": "sneha",
+      "name": "Sneha Patel",
+      "age": 29,
+      "role": "volunteer",
+      "category": "Conversation Volunteer",
+      "latitude": 26.92,
+      "longitude": 75.79,
+      "interests": ["Books", "Conversation"],
+      "bio": "Fictional volunteer for friendly conversation; not a verified or emergency service.",
+      "availability": "Available in this demo"
+    },
+    {
+      "key": "arjun",
+      "name": "Arjun Rao",
+      "age": 36,
+      "role": "volunteer",
+      "category": "Community Support Volunteer",
+      "latitude": 26.92,
+      "longitude": 75.79,
+      "interests": ["Community activities"],
+      "bio": "Fictional volunteer who enjoys helping people find community activities.",
+      "availability": "Evenings in this demo"
+    },
+    {
+      "key": "kavita",
+      "name": "Kavita Shah",
+      "age": 45,
+      "role": "volunteer",
+      "category": "Senior Companionship Volunteer",
+      "latitude": 26.92,
+      "longitude": 75.79,
+      "interests": ["Music", "Storytelling"],
+      "bio": "Fictional companionship volunteer available for a friendly scheduled call.",
+      "availability": "Afternoons in this demo"
+    }
+  ]
+}

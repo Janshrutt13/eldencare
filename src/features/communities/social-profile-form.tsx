@@ -1,6 +1,7 @@
 import { ActionForm } from "@/components/ui/action-form";
 import { saveSocialProfile } from "./actions";
 import type { SocialProfile } from "@/types/social";
+import { DEMO_CENTER } from "@/features/demo/catalog";
 export function SocialProfileForm({
   profile,
   name,
@@ -9,7 +10,11 @@ export function SocialProfileForm({
   name: string;
 }) {
   return (
-    <ActionForm action={saveSocialProfile} label="Save social preferences" buttonClassName="primary w-fit">
+    <ActionForm
+      action={saveSocialProfile}
+      label="Save social preferences"
+      buttonClassName="primary w-fit"
+    >
       <label>
         Social display name
         <input
@@ -35,7 +40,8 @@ export function SocialProfileForm({
       <p className="muted">
         Use a fictional neighborhood location, never a home address. Coordinates
         are rounded to two decimal places; other users see only approximate
-        distance. Example: 12.97, 77.59 (Bengaluru).
+        distance. The default is a fictional Jaipur neighborhood, not your
+        location.
       </p>
       <div className="grid gap-3 sm:grid-cols-2">
         <label>
@@ -47,7 +53,9 @@ export function SocialProfileForm({
             step="0.01"
             min={-90}
             max={90}
-            defaultValue={profile?.latitude}
+            defaultValue={
+              profile?.latitude ?? Number(DEMO_CENTER.latitude.toFixed(2))
+            }
           />
         </label>
         <label>
@@ -59,7 +67,9 @@ export function SocialProfileForm({
             step="0.01"
             min={-180}
             max={180}
-            defaultValue={profile?.longitude}
+            defaultValue={
+              profile?.longitude ?? Number(DEMO_CENTER.longitude.toFixed(2))
+            }
           />
         </label>
       </div>

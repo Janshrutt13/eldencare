@@ -15,9 +15,9 @@ export function NearbyPeople({
 }) {
   return (
     <section className="card stack">
-      <h2>People nearby</h2>
+      <h2>Other opted-in people near your social profile</h2>
       <div className="flex gap-3">
-        {[5, 10].map((km) => (
+        {[5, 7.5, 10].map((km) => (
           <Link
             className={`button ${radius === km ? "primary" : ""}`}
             href={`/dashboard/communities?radius=${km}`}

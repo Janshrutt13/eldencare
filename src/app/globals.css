@@ -4,7 +4,8 @@
   color-scheme: light;
   --radius: 14px;
   --radius-sm: 8px;
-  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.07), 0 1px 2px -1px rgb(0 0 0 / 0.05);
+  --shadow-card:
+    0 1px 3px 0 rgb(0 0 0 / 0.07), 0 1px 2px -1px rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 12px 0 rgb(0 0 0 / 0.08), 0 2px 4px -1px rgb(0 0 0 / 0.05);
   --transition: 150ms ease;
 }
@@ -17,7 +18,12 @@ body {
   margin: 0;
   background: #f8f8f8;
   color: #111;
-  font-family: "Inter", "Geist", system-ui, -apple-system, sans-serif;
+  font-family:
+    "Inter",
+    "Geist",
+    system-ui,
+    -apple-system,
+    sans-serif;
   font-size: 18px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -116,8 +122,11 @@ h3 {
   font-size: 0.95rem;
   text-decoration: none;
   cursor: pointer;
-  transition: background var(--transition), border-color var(--transition),
-    box-shadow var(--transition), opacity var(--transition);
+  transition:
+    background var(--transition),
+    border-color var(--transition),
+    box-shadow var(--transition),
+    opacity var(--transition);
   white-space: nowrap;
 }
 
@@ -173,7 +182,9 @@ textarea {
   color: #111;
   font-weight: 400;
   min-height: 48px;
-  transition: border-color var(--transition), box-shadow var(--transition);
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition);
 }
 
 input:focus,
@@ -246,7 +257,9 @@ textarea {
   color: #444;
   font-size: 0.95rem;
   font-weight: 500;
-  transition: background var(--transition), color var(--transition);
+  transition:
+    background var(--transition),
+    color var(--transition);
 }
 
 .nav-link:hover {
@@ -295,7 +308,9 @@ summary::before {
   font-size: 0.85rem;
   color: #666;
   flex-shrink: 0;
-  transition: background var(--transition), color var(--transition);
+  transition:
+    background var(--transition),
+    color var(--transition);
 }
 
 details[open] summary::before {
@@ -325,8 +340,12 @@ input[type="checkbox"] {
 }
 
 @keyframes skeleton-shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -356,10 +375,26 @@ input[type="checkbox"] {
   border: 1px solid transparent;
 }
 
-.badge-pending   { background: #f5f5f5; color: #555; border-color: #e0e0e0; }
-.badge-taken     { background: #f0faf0; color: #1a6b2a; border-color: #b8e0be; }
-.badge-skipped   { background: #fdf5f0; color: #8a3a1a; border-color: #f0cdb8; }
-.badge-unconfirmed { background: #fefbf0; color: #7a5a10; border-color: #edd98a; }
+.badge-pending {
+  background: #f5f5f5;
+  color: #555;
+  border-color: #e0e0e0;
+}
+.badge-taken {
+  background: #f0faf0;
+  color: #1a6b2a;
+  border-color: #b8e0be;
+}
+.badge-skipped {
+  background: #fdf5f0;
+  color: #8a3a1a;
+  border-color: #f0cdb8;
+}
+.badge-unconfirmed {
+  background: #fefbf0;
+  color: #7a5a10;
+  border-color: #edd98a;
+}
 
 /* ── Divider ── */
 
@@ -372,13 +407,17 @@ input[type="checkbox"] {
 /* ── Spinner ── */
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 .animate-spin {
   animation: spin 0.75s linear infinite;
 }
 @media (prefers-reduced-motion: reduce) {
-  .animate-spin { animation: none; }
+  .animate-spin {
+    animation: none;
+  }
 }
 
 /* ── Mobile sidebar transition ── */
@@ -435,4 +474,38 @@ input[type="checkbox"] {
 
 .sidebar-drawer {
   will-change: transform;
+}
+
+/* Leaflet stays below application navigation and the companion panel. */
+.demo-map {
+  height: 420px;
+  width: 100%;
+  border-radius: 12px;
+  z-index: 0;
+  font-family: inherit;
+}
+.demo-map .leaflet-tile-pane {
+  filter: grayscale(1);
+}
+.demo-map .leaflet-popup-content {
+  font-size: 16px;
+  line-height: 1.5;
+}
+.demo-map-marker span {
+  display: block;
+  width: 24px;
+  height: 24px;
+  margin: 4px;
+  border-radius: 50%;
+  background: #262626;
+  border: 3px solid white;
+  box-shadow: 0 0 0 1px #262626;
+}
+.demo-map .leaflet-control-attribution {
+  font-size: 12px;
+}
+@media (max-width: 640px) {
+  .demo-map {
+    height: 340px;
+  }
 }

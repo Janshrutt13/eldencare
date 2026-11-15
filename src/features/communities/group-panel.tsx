@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { ActionForm } from "@/components/ui/action-form";
-import { inviteGroupMember, leaveGroup, sendMessage } from "./actions";
-import { formatDateTime } from "@/lib/dates";
+import { inviteGroupMember, leaveGroup } from "./actions";
+import { ChatMessages } from "./chat-messages";
+import { Initials } from "@/components/ui/initials";
 import type { SocialGroup, GroupMember, SocialMessage } from "@/types/social";
 import type { AcceptedContact } from "./group-list";
 export function GroupPanel({
@@ -11,6 +12,7 @@ export function GroupPanel({
   contacts,
   radius,
   hasCursor,
+  userId,
 }: {
   group: SocialGroup;
   members: GroupMember[];
@@ -18,13 +20,33 @@ export function GroupPanel({
   contacts: AcceptedContact[];
   radius: number;
   hasCursor: boolean;
+  userId: string;
 }) {
   const memberIds = new Set(members.map((member) => member.user_id));
   const available = contacts.filter((contact) => !memberIds.has(contact.id));
   const href = `/dashboard/communities?radius=${radius}&group=${group.id}`;
   return (
-    <section className="card stack">
+    <section className="card stack" id="group-chat">
+      <Link
+        className="text-link w-fit"
+        href={`/dashboard/communities?radius=${radius}#my-groups`}
+      >
+        Back to groups
+      </Link>
       <h2>{group.name}</h2>
+      <p>{group.description}</p>
+      {group.demo_key && (
+        <p className="muted text-sm">
+          Fictional demo group · new messages are persisted, not simulated
+        </p>
+      )}
+      <div className="flex flex-wrap gap-2">
+        {members.map((member) => (
+          <span key={member.user_id} title={member.display_name}>
+            <Initials name={member.display_name} />
+          </span>
+        ))}
+      </div>
       <p className="muted">
         Members: {members.map((member) => member.display_name).join(", ")}
       </p>
@@ -52,18 +74,13 @@ export function GroupPanel({
           </div>
         </details>
       )}
-      <div className="stack" aria-label="Group messages">
-        {!messages.length && <p>No messages in this page.</p>}
-        {[...messages].reverse().map((message) => (
-          <article key={message.id} className="rounded-lg bg-neutral-50 p-3">
-            <p className="font-semibold">{message.sender_name}</p>
-            <p className="whitespace-pre-wrap break-words">{message.body}</p>
-            <p className="muted text-sm">
-              {formatDateTime(message.created_at)}
-            </p>
-          </article>
-        ))}
-      </div>
+      <ChatMessages
+        key={group.id}
+        groupId={group.id}
+        userId={userId}
+        messages={messages}
+        hasCursor={hasCursor}
+      />
       {messages.length === 50 && (
         <Link
           className="text-link"
@@ -77,13 +94,6 @@ export function GroupPanel({
           Latest messages
         </Link>
       )}
-      <ActionForm action={sendMessage} label="Send message" buttonClassName="primary">
-        <input type="hidden" name="group" value={group.id} />
-        <label>
-          Your message
-          <textarea name="body" required maxLength={2000} rows={3} />
-        </label>
-      </ActionForm>
       <ActionForm
         action={leaveGroup}
         label="Leave group"

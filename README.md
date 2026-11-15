@@ -81,25 +81,25 @@ Generate a cron secret locally using `node -e "console.log(require('crypto').ran
 
 ## Fictional demo accounts and seed safety
 
-The optional seed script creates Mira Demo (elderly), Arun Demo (family), Leela Demo (caretaker), and Dev Demo Volunteer. Each gets a fictional social profile near Bengaluru. It does **not** create medical records or grant care access: exercise the invitation UI yourself.
+The repeatable Jaipur seed creates **Meera, eight elderly companions, two family members, two caretakers and three volunteers**, plus four demo groups and seven sample messages. Family/caretaker access is linked only to seeded Meera. No medical records are seeded. See [Jaipur demo setup and walkthrough](docs/jaipur-demo.md) for the map, account switching and security details.
 
 1. Use a dedicated demo Supabase project with all migrations applied.
 2. Set `SUPABASE_SERVICE_ROLE_KEY`, `DEMO_PROJECT_REF` (the reference in your project URL), and `DEMO_ACCOUNT_PASSWORD` (16+ characters) in `.env.local`.
-3. Leave `DEMO_EMAIL_DOMAIN=eldencare.invalid` for accounts that cannot receive email, or set a domain you control when testing delivery. The resulting emails are `eldencare-demo-mira@DOMAIN`, `eldencare-demo-arun@DOMAIN`, `eldencare-demo-leela@DOMAIN`, and `eldencare-demo-dev@DOMAIN`.
+3. Leave `DEMO_EMAIL_DOMAIN=eldencare.invalid` for accounts that cannot receive email, or set a domain you control when testing delivery. Emails use `eldencare-jaipur-KEY@DOMAIN`, for example `eldencare-jaipur-meera@eldencare.invalid`. Keys are in `src/features/demo/catalog.json`.
 4. Run `npm.cmd run seed:demo`. Sign in with those emails and your configured demo password. Admin-created demo emails are marked confirmed; this is a local CLI workflow, not a public auth bypass.
 
-The script checks the project reference and requires the explicit `--fictional-data` flag (included in the npm script). It refuses existing demo emails, never upserts/deletes, never prints the password, and retains newly created accounts if a later step fails. It creates the volunteer account as a new family account before assigning the limited volunteer role with the admin client. Public signup cannot choose volunteer. Use manual cleanup only in your dedicated demo project if seeding is interrupted; never repoint this script at real patient data.
+The script checks the project reference and requires the explicit `--fictional-data` flag (included in the npm script). Existing accounts are reused only when trusted admin-set metadata identifies the same fixture. Other email collisions abort. Existing passwords/profiles are not overwritten. The transactional graph seeds only once; reruns preserve removed connections, revoked care access, departed group members and new messages. Earlier Bengaluru fixtures remain untouched. Set `DEMO_ACCOUNT_PICKER_ENABLED=true` to enable an email-only picker on normal sign-in; the password is still required and never sent to the browser by the server.
 
 ## Demo walkthrough
 
-1. Sign in as Mira. Create a family invitation under **Care team & access**. Sign in as Arun in another browser, redeem it, and verify Mira's dashboard is visible. Repeat for Leela if needed.
+1. Sign in as Meera. Her seeded care team includes Ananya/Amit and Rahul/Priya. Test the invitation flow with a separately registered fictional family account so the existing one-time-code behavior is exercised as well.
 2. Add a fictional medication schedule and appointment. Times use **Asia/Kolkata**. Choose a future dose a few minutes away; once due, mark it taken or not taken. Confirm summaries and activity update.
 3. Edit a medication: past doses retain their original name/instructions and confirmations; only future pending doses are replaced. Removing a schedule archives it and keeps past dose records.
 4. Open **Reminders** and queue a fictional test reminder to your own account. Without credentials it remains pending. With a verified sender and a real controlled recipient it is submitted to Resend. “Accepted by email provider” does not claim inbox delivery.
 5. Ask the companion about today's medicines or the next appointment. These answers come directly from authorized records even without Gemini. Use a general greeting to test Gemini; enable voice only in a supporting browser. Review microphone transcription before sending.
 6. Request a call with the demo volunteer. In the volunteer session accept it, then join using the Jitsi link. The public Jitsi service may require the host to sign in; no verified volunteer service is implied.
 7. In **Nearby communities**, discover seeded users, send a connection request, and accept it in the recipient session. Create a group, add another accepted connection, send messages, refresh the other session, and leave the group. Leaving removes future read/write access.
-8. Revoke Arun's care membership as Mira. Reload Arun's view and confirm medical access disappears while unrelated social relationships remain separate.
+8. Revoke Ananya's care membership as Meera. Reload Ananya's view and confirm medical access disappears while unrelated social relationships remain separate. Rerunning the seed must not restore this access.
 
 ## Reminder worker and scheduling
 
@@ -137,7 +137,7 @@ For an additional hosted-database check, run `supabase/tests/authorization.sql` 
 - Account roles are stored in immutable-to-client profile rows, not trusted from editable Auth metadata. Codes use 256 random bits, SHA-256 storage, 24-hour expiry and atomic one-time consumption.
 - No AI writes or tool execution. Supported record queries are deterministic; general conversation sends only the submitted message to Google, not medical records. User input and AI output are bounded. General AI messages are limited to 20/hour/account in PostgreSQL. Model instructions are a prototype guardrail, not a clinical safety guarantee.
 - Social locations are rounded to two decimal places; discovery returns distance, never coordinates or home addresses. Names/bios/interests are intentionally shared with other opted-in users. Group members see group history; leaving does not erase past messages. No reporting/moderation or blocking tools are included.
-- Messages are fetched 50 at a time with a timestamp/ID cursor. Refresh is manual; there is no realtime server. Calls are limited to 20/day, connection requests to 30/day, and messages to 30/minute/account at the database boundary.
+- Messages are fetched 50 at a time with a timestamp/ID cursor. The latest chat page refreshes every 15 seconds while visible; older history and hidden pages do not poll. Manual refresh remains available. There is no realtime server. Calls are limited to 20/day, connection requests to 30/day, and messages to 30/minute/account at the database boundary.
 - Daily medication schedules only; app forms use Asia/Kolkata. No recurring appointment rules or timezone editor. New schedules do not generate retrospective doses. Generation covers a seven-day catch-up window and two future days; keep the worker running to avoid gaps during extended downtime.
 - Display limits: 200 doses on today's dashboard, 300 recent medication records, 100 appointments, 200 connection requests, 50 groups/calls/notifications. Adherence aggregates all actual due records in the last seven days rather than a truncated list.
 - No password-reset UI, MFA, production audit trail, consent management, calendar integration, or clinical decision support. Provider acceptance is not inbox delivery. Repeated failed/uncertain emails need owner investigation; there is no public admin retry endpoint.

@@ -1,5 +1,17 @@
 # EldenCare — continuation context and remaining work
 
+## Latest update: Jaipur companionship enhancement
+
+This update supersedes the older task/status notes below. The user subsequently requested an interactive Jaipur map, richer fictional profiles, repeatable groups/chat and care/volunteer interactions. Implementation now includes React Leaflet/OpenStreetMap, a shared Haversine-filtered map/list (5/7.5/10 km), eight companion fixtures plus Meera, normal-auth account picker, connection removal, group previews, chat refresh/scroll and scheduled calls on the dashboard. Existing auth/RLS/medical workflows were preserved.
+
+New migrations: `202611150008_social_demo.sql` and `202611150009_demo_seed_graph.sql`. Apply after 001–007. They add an admin-only-writable fictional directory, group metadata, membership-only group summaries, authorized connection removal, and a transactional one-time graph seed. The new CLI seed uses trusted app metadata for account reuse and never restores relationships after seed completion. It creates 16 accounts, four groups and seven initial messages. Read `docs/jaipur-demo.md` before running it.
+
+Latest environment presence check: service-role key is now configured; `DEMO_PROJECT_REF` and `DEMO_ACCOUNT_PASSWORD` are missing. No hosted migrations or seed were executed. Demo map/profile/group previews are explicitly read-only until the database fixtures are seeded. No acceptance or chat replies are simulated. Browser inventory is still empty, so live tile/hover/touch/mobile checks remain outstanding.
+
+The expanded suite passes 35 tests, including actual PostgreSQL tests for seeding idempotency, removal authorization, preserved revocation/new messages and fixture-coordinate privacy. TypeScript and the production build pass. Lint has one pre-existing custom-font warning in `src/app/layout.tsx` (no errors); no rule was suppressed. Seed message fixtures live separately in `src/features/demo/groups.json` and are not imported by client-side map/login modules.
+
+---
+
 Updated: 15 November 2026 (Asia/Calcutta).
 
 ## User objective and preferences
