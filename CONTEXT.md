@@ -1,5 +1,9 @@
 # EldenCare — continuation context and remaining work
 
+## Latest update: Vercel middleware trace fix
+
+Removed the obsolete root `middleware.ts` wrapper; `src/proxy.ts` is the sole Next.js 16 proxy entry point alongside `src/app`. Before removal, a local production build succeeded but omitted `.next/server/middleware.js.nft.json`, matching the missing artifact reported by Vercel. After removal, `npm.cmd run build` succeeds and generates that trace and `middleware.js`. Authentication refresh and route matchers remain in `src/proxy.ts`. Commit/push this fix and redeploy without the previous build cache. A hosted deployment is still unverified.
+
 ## Latest update: Jaipur companionship enhancement
 
 This update supersedes the older task/status notes below. The user subsequently requested an interactive Jaipur map, richer fictional profiles, repeatable groups/chat and care/volunteer interactions. Implementation now includes React Leaflet/OpenStreetMap, a shared Haversine-filtered map/list (5/7.5/10 km), eight companion fixtures plus Meera, normal-auth account picker, connection removal, group previews, chat refresh/scroll and scheduled calls on the dashboard. Existing auth/RLS/medical workflows were preserved.
